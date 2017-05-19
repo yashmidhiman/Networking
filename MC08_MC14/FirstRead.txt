@@ -1,0 +1,51 @@
+*************************************MiniNet**************************************
+part 1:
+
+terminal1> sh topo.sh										//create topology
+
+terminal2> sh net.sh 										//set flow-rules
+
+terminal1/mininet> xterm h1 h2 h3 h4						//open host terminals
+	h4> sh server.sh										//create server on h4
+
+	//do as fast as you can these three commands
+	h1> sh h1.sh											//client h1 tcp and udp traffic
+	h2> wget -r 10.0.0.4:8080								//download HTTP
+	h3> sh h3.sh											//client h3 tcp and udp traffic
+
+//server h4 files records will be in folder iperf
+//files will be downloaded in 10.0.0.4:8080 (created after downloading)
+//separately h1 and h3 clients side tcp and udp records will be in this folder itself. just for the observation not a part of assignment
+
+part 2:
+
+terminal1> sh topology.sh									//create topology
+
+terminal2> sh qh4.sh										//create queues
+terminal2> sh qflow.sh										//set flow-rules
+
+terminal1/mininet> xterm h1 h2 h3 h4						//open host terminals
+	h4> sh server.sh										//create server on h4
+
+	//do as fast as you can these three commands
+	h1> sh h1.sh											//client h1 tcp and udp traffic
+	h2> wget -r 10.0.0.4:8080								//download HTTP
+	h3> sh h3.sh											//client h3 tcp and udp traffic
+
+//server h4 files records will be in folder iperf
+//files will be downloaded in 10.0.0.4:8080 (created after downloading)
+//separately h1 and h3 clients side tcp and udp records will be in this folder itself. just for the observation not a part of assignment
+
+use the rest commands to draw graph, separate data, find average
+
+To get separate columns for x and y from the tcp and udp result
+:->cat <file name> | grep sec | head -15 | tr - " " | awk '{print $4,$8}' <output file>
+
+//server side is getting two entries one from h1 and one from h3. Sum the values of corresponding rows
+awk 'NR%2{printf "%s ",$0;next;}1' <src_file> > <int_file>; awk '{print $1, $2+$4}' <int_file> > > <res_file>
+
+//to inorder to take the sum of two files
+awk ‘NR==FNR{a[NR]=$2;next}{print $1, $2+a[FNR]}’ <file1> <file2> > <res_file>
+
+//to find the average
+awk '{print $1, ($2 / 10)}' total > avg
